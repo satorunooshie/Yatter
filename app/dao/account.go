@@ -5,8 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"yatter-backend-go/app/domain/object"
-	"yatter-backend-go/app/domain/repository"
+
+	"github.com/satorunooshie/Yatter/app/domain/object"
+	"github.com/satorunooshie/Yatter/app/domain/repository"
 
 	"github.com/jmoiron/sqlx"
 )

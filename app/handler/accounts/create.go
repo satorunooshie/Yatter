@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"yatter-backend-go/app/domain/object"
-	"yatter-backend-go/app/handler/httperror"
+	"github.com/satorunooshie/Yatter/app/domain/object"
+	"github.com/satorunooshie/Yatter/app/handler/httperror"
 )
 
 // Request body for `POST /v1/accounts`

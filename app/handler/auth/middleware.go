@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strings"
 
-	"yatter-backend-go/app/app"
-	"yatter-backend-go/app/domain/object"
-	"yatter-backend-go/app/handler/httperror"
+	"github.com/satorunooshie/Yatter/app/app"
+	"github.com/satorunooshie/Yatter/app/domain/object"
+	"github.com/satorunooshie/Yatter/app/handler/httperror"
 )
 
 var contextKey = new(struct{})

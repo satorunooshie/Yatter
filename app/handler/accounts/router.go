@@ -3,9 +3,9 @@ package accounts
 import (
 	"net/http"
 
-	"yatter-backend-go/app/app"
-
 	"github.com/go-chi/chi"
+
+	"github.com/satorunooshie/Yatter/app/app"
 )
 
 // Implementation of handler
