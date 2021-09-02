@@ -10,9 +10,9 @@ import (
 	"path"
 	"testing"
 
-	"yatter-backend-go/app/app"
-
 	"github.com/stretchr/testify/assert"
+
+	"github.com/satorunooshie/Yatter/app/app"
 )
 
 func TestAccountRegistration(t *testing.T) {

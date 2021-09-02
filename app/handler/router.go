@@ -4,13 +4,13 @@ import (
 	"net/http"
 	"time"
 
-	"yatter-backend-go/app/app"
-	"yatter-backend-go/app/handler/accounts"
-	"yatter-backend-go/app/handler/health"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+
+	"github.com/satorunooshie/Yatter/app/app"
+	"github.com/satorunooshie/Yatter/app/handler/accounts"
+	"github.com/satorunooshie/Yatter/app/handler/health"
 )
 
 func NewRouter(app *app.App) http.Handler {

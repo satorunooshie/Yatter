@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"yatter-backend-go/app/domain/object"
+	"github.com/satorunooshie/Yatter/app/domain/object"
 )
 
 type Account interface {

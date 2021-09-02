@@ -3,9 +3,10 @@ package dao
 import (
 	"fmt"
 	"log"
-	"yatter-backend-go/app/domain/repository"
 
 	"github.com/jmoiron/sqlx"
+
+	"github.com/satorunooshie/Yatter/app/domain/repository"
 )
 
 type (

@@ -1,8 +1,8 @@
 package app
 
 import (
-	"yatter-backend-go/app/config"
-	"yatter-backend-go/app/dao"
+	"github.com/satorunooshie/Yatter/app/config"
+	"github.com/satorunooshie/Yatter/app/dao"
 )
 
 // Dependency manager for whole application
