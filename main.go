@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"yatter-backend-go/app/app"
-	"yatter-backend-go/app/config"
-	"yatter-backend-go/app/handler"
+	"github.com/satorunooshie/Yatter/app/app"
+	"github.com/satorunooshie/Yatter/app/config"
+	"github.com/satorunooshie/Yatter/app/handler"
 )
 
 func main() {
