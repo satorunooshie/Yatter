@@ -4,7 +4,7 @@ services:
     image: mysql:5.7
     command: "mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --default-time-zone='+9:00'"
     ports:
-      - "3309:3309"
+      - "3306:3306"
     environment:
       MYSQL_DATABASE: yatter
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
