@@ -72,7 +72,15 @@ func (h *handler) GetPublic(w http.ResponseWriter, r *http.Request) {
 
 	accountRepo := h.app.Dao.Account()
 	accounts, err := accountRepo.FindByIDs(ctx, accountIDs)
+	if err != nil || accounts == nil {
+		httperror.InternalServerError(w, err)
+		return
+	}
 	for i, v := range accounts {
+		if v == nil {
+			statuses[i].Account = object.Account(nil)
+			continue
+		}
 		statuses[i].Account = *v
 	}
 
