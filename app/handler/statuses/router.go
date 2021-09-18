@@ -3,9 +3,9 @@ package statuses
 import (
 	"net/http"
 
-	"github.com/satorunooshie/Yatter/app/app"
-
 	"github.com/go-chi/chi"
+
+	"github.com/satorunooshie/Yatter/app/app"
 )
 
 // Implementation of handler

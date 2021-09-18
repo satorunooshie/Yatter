@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"github.com/satorunooshie/Yatter/app/handler/auth"
-	"github.com/satorunooshie/Yatter/app/handler/statuses"
 	"net/http"
 	"time"
 
@@ -12,7 +10,9 @@ import (
 
 	"github.com/satorunooshie/Yatter/app/app"
 	"github.com/satorunooshie/Yatter/app/handler/accounts"
+	"github.com/satorunooshie/Yatter/app/handler/auth"
 	"github.com/satorunooshie/Yatter/app/handler/health"
+	"github.com/satorunooshie/Yatter/app/handler/statuses"
 )
 
 func NewRouter(app *app.App) http.Handler {

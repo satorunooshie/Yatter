@@ -2,10 +2,11 @@ package statuses
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/satorunooshie/Yatter/app/domain/object"
 	"github.com/satorunooshie/Yatter/app/handler/auth"
 	"github.com/satorunooshie/Yatter/app/handler/httperror"
-	"net/http"
 )
 
 // Request body for `POST /v1/statuses`

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/satorunooshie/Yatter/app/handler/httperror"
-
 	"github.com/go-chi/chi"
+
+	"github.com/satorunooshie/Yatter/app/handler/httperror"
 )
 
 // Handle request for `GET /v1/accounts/{username}`

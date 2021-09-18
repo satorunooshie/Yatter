@@ -6,10 +6,10 @@ import (
 	"errors"
 	"log"
 
+	"github.com/jmoiron/sqlx"
+
 	"github.com/satorunooshie/Yatter/app/domain/object"
 	"github.com/satorunooshie/Yatter/app/domain/repository"
-
-	"github.com/jmoiron/sqlx"
 )
 
 type (
