@@ -10,7 +10,9 @@ import (
 
 	"github.com/satorunooshie/Yatter/app/app"
 	"github.com/satorunooshie/Yatter/app/handler/accounts"
+	"github.com/satorunooshie/Yatter/app/handler/auth"
 	"github.com/satorunooshie/Yatter/app/handler/health"
+	"github.com/satorunooshie/Yatter/app/handler/statuses"
 )
 
 func NewRouter(app *app.App) http.Handler {
@@ -31,6 +33,9 @@ func NewRouter(app *app.App) http.Handler {
 	r.Mount("/v1/health", health.NewRouter())
 
 	r.Mount("/v1/accounts", accounts.NewRouter(app))
+
+	/* Auth */
+	r.Mount("/v1/statuses", auth.Middleware(app)(statuses.NewRouter(app)))
 
 	return r
 }

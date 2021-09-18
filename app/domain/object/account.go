@@ -11,33 +11,18 @@ type (
 	AccountID    = int64
 	PasswordHash = string
 
-	// Account account
 	Account struct {
-		// The internal ID of the account
-		ID AccountID `json:"-"`
-
-		// The username of the account
-		Username string `json:"username,omitempty"`
-
-		// The username of the account
-		PasswordHash string `json:"-" db:"password_hash"`
-
-		// The account's display name
-		DisplayName *string `json:"display_name,omitempty" db:"display_name"`
-
+		ID           AccountID `json:"-"`
+		Username     string    `json:"username,omitempty"`
+		PasswordHash string    `json:"-" db:"password_hash"`
+		DisplayName  *string   `json:"display_name,omitempty" db:"display_name"`
 		// URL to the avatar image
 		Avatar *string `json:"avatar,omitempty"`
-
 		// URL to the header image
 		Header *string `json:"header,omitempty"`
-
 		// Biography of user
-		Note *string `json:"note,omitempty"`
-
-		// The time the account was created
+		Note     *string  `json:"note,omitempty"`
 		CreateAt DateTime `json:"create_at,omitempty" db:"create_at"`
-
-		// The time the account was deleted
 		DeleteAt DateTime `json:"-" db:"delete_at"`
 	}
 )
