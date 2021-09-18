@@ -25,7 +25,7 @@ func NewAccount(db *sqlx.DB) repository.Account {
 
 func (r *account) FindByID(ctx context.Context, id int64) (*object.Account, error) {
 	entity := &object.Account{}
-	if err := r.db.QueryRowxContext(ctx, "SELECT * FROM `account` WHERE `id` = ?", id).StructScan(entity); err != nil {
+	if err := r.db.QueryRowxContext(ctx, "SELECT * FROM `account` WHERE `id` = ? AND `delete_at` IS NULL", id).StructScan(entity); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
@@ -36,7 +36,7 @@ func (r *account) FindByID(ctx context.Context, id int64) (*object.Account, erro
 
 func (r *account) FindByUsername(ctx context.Context, username string) (*object.Account, error) {
 	entity := &object.Account{}
-	if err := r.db.QueryRowxContext(ctx, "SELECT * FROM `account` WHERE `username` = ?", username).StructScan(entity); err != nil {
+	if err := r.db.QueryRowxContext(ctx, "SELECT * FROM `account` WHERE `username` = ? AND `delete_at` IS NULL", username).StructScan(entity); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}

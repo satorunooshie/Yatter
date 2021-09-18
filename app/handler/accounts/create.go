@@ -24,7 +24,6 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	account := new(object.Account)
-	account.Username = req.Username
 	if err := account.SetPassword(req.Password); err != nil {
 		httperror.InternalServerError(w, err)
 		return
@@ -33,16 +32,17 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	accountRepo := h.app.Dao.Account() // domain/repository の取得
 
-	user, err := accountRepo.FindByUsername(ctx, account.Username)
+	accountInUse, err := accountRepo.FindByUsername(ctx, req.Username)
 	if err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	}
-	if user != nil {
+	if accountInUse != nil {
 		httperror.BadRequest(w, errors.New("account name is already in use"))
 		return
 	}
 
+	account.Username = req.Username
 	if err := accountRepo.Insert(ctx, account.Username, account.PasswordHash); err != nil {
 		httperror.InternalServerError(w, err)
 		return

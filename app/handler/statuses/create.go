@@ -17,8 +17,8 @@ type StatusCreateRequest struct {
 
 // Handle request for `POST /v1/statuses`
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	user := auth.AccountOf(r)
-	if user == nil {
+	account := auth.AccountOf(r)
+	if account == nil {
 		httperror.Error(w, http.StatusUnauthorized)
 		return
 	}
@@ -32,7 +32,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	statusRepo := h.app.Dao.Status() // domain/repository の取得
 
-	id, err := statusRepo.Insert(ctx, user.ID, req.Status)
+	id, err := statusRepo.Insert(ctx, account.ID, req.Status)
 	if err != nil {
 		httperror.InternalServerError(w, err)
 		return
@@ -46,7 +46,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	res := &object.Status{
 		ID:       id,
-		Account:  *user,
+		Account:  *account,
 		Content:  status.Content,
 		CreateAt: status.CreateAt,
 	}
