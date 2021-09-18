@@ -34,6 +34,36 @@ func (r *status) FindByID(ctx context.Context, id int64) (*object.Status, error)
 	return entity, nil
 }
 
+func (r *status) Select(ctx context.Context, minID, maxID, limit int64) ([]*object.Status, error) {
+	rows, err := r.db.QueryxContext(ctx, "SELECT * FROM `status` WHERE `id` > ? AND `id` < ? AND `delete_at` IS NULL LIMIT ?", minID, maxID, limit)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("[WARN] dao::status::Select::rows.Close(): %v", err)
+		}
+	}()
+
+	entities := make([]*object.Status, 0, limit)
+	for rows.Next() {
+		entity := &object.Status{}
+		if err := rows.StructScan(&entity); err != nil {
+			return nil, err
+		}
+		entities = append(entities, entity)
+	}
+	return entities, nil
+}
+
+func (r *status) SelectOnlyMedia(ctx context.Context, minID, maxID, limit int64) ([]*object.Status, error) {
+	return nil, nil
+}
+
 func (r *status) Insert(ctx context.Context, accountID int64, content string) (int64, error) {
 	stmt, err := r.db.PreparexContext(ctx, "INSERT INTO `status` (`account_id`, `content`) VALUES (?, ?)")
 	if err != nil {

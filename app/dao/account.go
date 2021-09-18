@@ -34,6 +34,36 @@ func (r *account) FindByID(ctx context.Context, id int64) (*object.Account, erro
 	return entity, nil
 }
 
+func (r *account) FindByIDs(ctx context.Context, ids []int64) ([]*object.Account, error) {
+	query, params, err := sqlx.In("SELECT * FROM `account` WHERE `id` IN (?) AND `delete_at` IS NULL", ids)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := r.db.QueryxContext(ctx, query, params...)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("[WARN] dao::account::FindByIDs::rows.Close(): %v", err)
+		}
+	}()
+
+	entities := make([]*object.Account, 0, len(ids))
+	for rows.Next() {
+		entity := &object.Account{}
+		if err := rows.StructScan(&entity); err != nil {
+			return nil, err
+		}
+		entities = append(entities, entity)
+	}
+	return entities, nil
+}
+
 func (r *account) FindByUsername(ctx context.Context, username string) (*object.Account, error) {
 	entity := &object.Account{}
 	if err := r.db.QueryRowxContext(ctx, "SELECT * FROM `account` WHERE `username` = ? AND `delete_at` IS NULL", username).StructScan(entity); err != nil {
