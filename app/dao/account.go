@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
+	"log"
 
 	"github.com/satorunooshie/Yatter/app/domain/object"
 	"github.com/satorunooshie/Yatter/app/domain/repository"
@@ -26,15 +26,29 @@ func NewAccount(db *sqlx.DB) repository.Account {
 
 // FindByUsername : ユーザ名からユーザを取得
 func (r *account) FindByUsername(ctx context.Context, username string) (*object.Account, error) {
-	entity := new(object.Account)
-	err := r.db.QueryRowxContext(ctx, "select * from account where username = ?", username).StructScan(entity)
+	entity := &object.Account{}
+	err := r.db.QueryRowxContext(ctx, "SELECT * FROM `account` WHERE `username` = ?", username).StructScan(entity)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
-
-		return nil, fmt.Errorf("%w", err)
+		return nil, err
 	}
-
 	return entity, nil
+}
+
+func (r *account) Insert(ctx context.Context, username, passwordHash string) error {
+	stmt, err := r.db.PrepareContext(ctx, "INSERT INTO account (username, password_hash) VALUES (?, ?)")
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := stmt.Close(); err != nil {
+			log.Printf("[WARN] dao::account::Insert::stmt.Close(): %v", err)
+		}
+	}()
+	if _, err := stmt.Exec(username, passwordHash); err != nil {
+		return err
+	}
+	return nil
 }

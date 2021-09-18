@@ -18,6 +18,5 @@ func BadRequest(w http.ResponseWriter, err error) {
 // Response with Internal Server Error (500)
 func InternalServerError(w http.ResponseWriter, err error) {
 	log.Printf("[InternalServerError] %+v", err)
-
 	Error(w, http.StatusInternalServerError)
 }
