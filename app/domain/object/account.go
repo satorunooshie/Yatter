@@ -36,6 +36,9 @@ type (
 
 		// The time the account was created
 		CreateAt DateTime `json:"create_at,omitempty" db:"create_at"`
+
+		// The time the account was deleted
+		DeleteAt DateTime `json:"-" db:"delete_at"`
 	}
 )
 

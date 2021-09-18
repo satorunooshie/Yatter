@@ -28,8 +28,9 @@ func NewRouter(app *app.App) http.Handler {
 	// processing should be stopped.
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	r.Mount("/v1/accounts", accounts.NewRouter(app))
 	r.Mount("/v1/health", health.NewRouter())
+
+	r.Mount("/v1/accounts", accounts.NewRouter(app))
 
 	return r
 }
