@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	OnlyMedia = 1
+	All = iota
+	OnlyMedia
 )
 
 func (h *handler) GetPublic(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +40,7 @@ func (h *handler) GetPublic(w http.ResponseWriter, r *http.Request) {
 	if sinceID == request.ParamNotFound {
 		sinceID = 0
 	}
-	media, err := request.DecodeParam2Int64(r, "only_media")
+	selectType, err := request.DecodeParam2Int64(r, "only_media")
 	if err != nil {
 		httperror.BadRequest(w, err)
 		return
@@ -49,14 +50,14 @@ func (h *handler) GetPublic(w http.ResponseWriter, r *http.Request) {
 	statusRepo := h.app.Dao.Status()
 
 	statuses := make([]*object.Status, 0, limit)
-	switch media {
+	switch selectType {
 	case OnlyMedia:
 		statuses, err = statusRepo.SelectOnlyMedia(ctx, sinceID, maxID, limit)
 		if err != nil {
 			httperror.InternalServerError(w, err)
 			return
 		}
-	case request.ParamNotFound:
+	case All, request.ParamNotFound:
 		statuses, err = statusRepo.Select(ctx, sinceID, maxID, limit)
 		if err != nil {
 			httperror.InternalServerError(w, err)
