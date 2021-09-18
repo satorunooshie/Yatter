@@ -38,7 +38,7 @@ func (r *account) FindByUsername(ctx context.Context, username string) (*object.
 }
 
 func (r *account) Insert(ctx context.Context, username, passwordHash string) error {
-	stmt, err := r.db.PrepareContext(ctx, "INSERT INTO account (username, password_hash) VALUES (?, ?)")
+	stmt, err := r.db.PrepareContext(ctx, "INSERT INTO `account` (`username`, `password_hash`) VALUES (?, ?)")
 	if err != nil {
 		return err
 	}
