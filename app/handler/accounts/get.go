@@ -15,6 +15,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")
 	if username == "" {
 		httperror.BadRequest(w, errors.New("invalid params"))
+		return
 	}
 
 	ctx := r.Context()
