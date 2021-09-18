@@ -27,8 +27,7 @@ func NewAccount(db *sqlx.DB) repository.Account {
 // FindByUsername : ユーザ名からユーザを取得
 func (r *account) FindByUsername(ctx context.Context, username string) (*object.Account, error) {
 	entity := &object.Account{}
-	err := r.db.QueryRowxContext(ctx, "SELECT * FROM `account` WHERE `username` = ?", username).StructScan(entity)
-	if err != nil {
+	if err := r.db.QueryRowxContext(ctx, "SELECT * FROM `account` WHERE `username` = ?", username).StructScan(entity); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
