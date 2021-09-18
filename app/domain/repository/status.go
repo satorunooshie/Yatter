@@ -8,5 +8,6 @@ import (
 
 type Status interface {
 	FindByID(ctx context.Context, id int64) (*object.Status, error)
-	Insert(ctx context.Context, userID int64, content string) (int64, error)
+	Insert(ctx context.Context, accountID int64, content string) (int64, error)
+	Delete(ctx context.Context, id int64) error
 }

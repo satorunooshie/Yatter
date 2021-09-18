@@ -25,7 +25,7 @@ func NewStatus(db *sqlx.DB) repository.Status {
 
 func (r *status) FindByID(ctx context.Context, id int64) (*object.Status, error) {
 	entity := &object.Status{}
-	if err := r.db.QueryRowxContext(ctx, "SELECT * FROM `status` WHERE `id` = ?", id).StructScan(entity); err != nil {
+	if err := r.db.QueryRowxContext(ctx, "SELECT * FROM `status` WHERE `id` = ? AND `delete_at` IS NULL", id).StructScan(entity); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
@@ -34,7 +34,7 @@ func (r *status) FindByID(ctx context.Context, id int64) (*object.Status, error)
 	return entity, nil
 }
 
-func (r *status) Insert(ctx context.Context, userID int64, content string) (int64, error) {
+func (r *status) Insert(ctx context.Context, accountID int64, content string) (int64, error) {
 	stmt, err := r.db.PreparexContext(ctx, "INSERT INTO `status` (`account_id`, `content`) VALUES (?, ?)")
 	if err != nil {
 		return 0, err
@@ -46,7 +46,7 @@ func (r *status) Insert(ctx context.Context, userID int64, content string) (int6
 		}
 	}()
 
-	res, err := stmt.ExecContext(ctx, userID, content)
+	res, err := stmt.ExecContext(ctx, accountID, content)
 	if err != nil {
 		return 0, err
 	}
@@ -57,4 +57,22 @@ func (r *status) Insert(ctx context.Context, userID int64, content string) (int6
 	}
 
 	return id, nil
+}
+
+func (r *status) Delete(ctx context.Context, id int64) error {
+	stmt, err := r.db.PrepareContext(ctx, "UPDATE `status` SET `delete_at` = NOW() WHERE `id` = ?")
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if err := stmt.Close(); err != nil {
+			log.Printf("[WARN] dao::status::Delete::stmt.Close(): %v", err)
+		}
+	}()
+
+	if _, err := stmt.ExecContext(ctx, id); err != nil {
+		return err
+	}
+	return nil
 }

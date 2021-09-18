@@ -21,9 +21,9 @@ type (
 		// URL to the header image
 		Header *string `json:"header,omitempty"`
 		// Biography of user
-		Note     *string  `json:"note,omitempty"`
-		CreateAt DateTime `json:"create_at,omitempty" db:"create_at"`
-		DeleteAt DateTime `json:"-" db:"delete_at"`
+		Note     *string   `json:"note,omitempty"`
+		CreateAt DateTime  `json:"create_at,omitempty" db:"create_at"`
+		DeleteAt *DateTime `json:"-" db:"delete_at"`
 	}
 )
 
