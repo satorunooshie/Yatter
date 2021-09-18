@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 
 	"github.com/satorunooshie/Yatter/app/app"
+	"github.com/satorunooshie/Yatter/app/handler/auth"
 )
 
 // Implementation of handler
@@ -18,7 +19,8 @@ func NewRouter(app *app.App) http.Handler {
 	r := chi.NewRouter()
 
 	h := &handler{app: app}
-	r.Post("/", h.Create)
+	r.With(auth.Middleware(app)).Post("/", h.Create)
+	r.Get("/{id}", h.Get)
 
 	return r
 }
