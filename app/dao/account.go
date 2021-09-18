@@ -19,7 +19,6 @@ type (
 	}
 )
 
-// Create accout repository
 func NewAccount(db *sqlx.DB) repository.Account {
 	return &account{db: db}
 }
@@ -37,7 +36,7 @@ func (r *account) FindByUsername(ctx context.Context, username string) (*object.
 }
 
 func (r *account) Insert(ctx context.Context, username, passwordHash string) error {
-	stmt, err := r.db.PrepareContext(ctx, "INSERT INTO `account` (`username`, `password_hash`) VALUES (?, ?)")
+	stmt, err := r.db.PreparexContext(ctx, "INSERT INTO `account` (`username`, `password_hash`) VALUES (?, ?)")
 	if err != nil {
 		return err
 	}
@@ -46,7 +45,7 @@ func (r *account) Insert(ctx context.Context, username, passwordHash string) err
 			log.Printf("[WARN] dao::account::Insert::stmt.Close(): %v", err)
 		}
 	}()
-	if _, err := stmt.Exec(username, passwordHash); err != nil {
+	if _, err := stmt.ExecContext(ctx, username, passwordHash); err != nil {
 		return err
 	}
 	return nil

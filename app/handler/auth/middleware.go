@@ -33,29 +33,29 @@ func Middleware(app *app.App) func(http.Handler) http.Handler {
 			}
 
 			username := pair[1]
-			if account, err := app.Dao.Account().FindByUsername(ctx, username); err != nil {
+			account, err := app.Dao.Account().FindByUsername(ctx, username)
+			if err != nil {
 				httperror.InternalServerError(w, err)
 				return
-			} else if account == nil {
+			}
+			if account == nil {
 				httperror.Error(w, http.StatusUnauthorized)
 				return
-			} else {
-				next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), contextKey, account)))
 			}
+			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), contextKey, account)))
 		})
 	}
 }
 
 // Read Account data from authorized request
 func AccountOf(r *http.Request) *object.Account {
-	if cv := r.Context().Value(contextKey); cv == nil {
+	cv := r.Context().Value(contextKey)
+	if cv == nil {
 		return nil
-
-	} else if account, ok := cv.(*object.Account); !ok {
-		return nil
-
-	} else {
-		return account
-
 	}
+	account, ok := cv.(*object.Account)
+	if !ok {
+		return nil
+	}
+	return account
 }

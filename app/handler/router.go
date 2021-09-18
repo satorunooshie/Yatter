@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"github.com/satorunooshie/Yatter/app/handler/auth"
+	"github.com/satorunooshie/Yatter/app/handler/statuses"
 	"net/http"
 	"time"
 
@@ -31,6 +33,9 @@ func NewRouter(app *app.App) http.Handler {
 	r.Mount("/v1/health", health.NewRouter())
 
 	r.Mount("/v1/accounts", accounts.NewRouter(app))
+
+	/* Auth */
+	r.Mount("/v1/statuses", auth.Middleware(app)(statuses.NewRouter(app)))
 
 	return r
 }
