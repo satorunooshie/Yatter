@@ -23,7 +23,7 @@ func NewStatus(db *sqlx.DB) repository.Status {
 	return &status{db: db}
 }
 
-func (r *status) FindByID(ctx context.Context, id int64) (*object.Status, error) {
+func (r *status) FindByID(ctx context.Context, id object.StatusID) (*object.Status, error) {
 	entity := &object.Status{}
 	if err := r.db.QueryRowxContext(ctx, "SELECT * FROM `status` WHERE `id` = ? AND `delete_at` IS NULL", id).StructScan(entity); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -34,7 +34,63 @@ func (r *status) FindByID(ctx context.Context, id int64) (*object.Status, error)
 	return entity, nil
 }
 
-func (r *status) Insert(ctx context.Context, accountID int64, content string) (int64, error) {
+func (r *status) FindByIDs(ctx context.Context, ids []object.StatusID) ([]*object.Status, error) {
+	query, params, err := sqlx.In("SELECT * FROM `status` WHERE `id` IN (?) AND `delete_at` IS NULL", ids)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := r.db.QueryxContext(ctx, query, params...)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("[WARN] dao::account::FindByIDs::rows.Close(): %v", err)
+		}
+	}()
+
+	entities := make([]*object.Status, 0, len(ids))
+	for rows.Next() {
+		entity := &object.Status{}
+		if err := rows.StructScan(&entity); err != nil {
+			return nil, err
+		}
+		entities = append(entities, entity)
+	}
+	return entities, nil
+}
+
+func (r *status) Select(ctx context.Context, minID, maxID, limit int64) ([]*object.Status, error) {
+	rows, err := r.db.QueryxContext(ctx, "SELECT * FROM `status` WHERE `id` BETWEEN ? AND ? AND `delete_at` IS NULL ORDER BY `create_at` DESC LIMIT ?", minID, maxID, limit)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("[WARN] dao::status::Select::rows.Close(): %v", err)
+		}
+	}()
+
+	entities := make([]*object.Status, 0, limit)
+	for rows.Next() {
+		entity := &object.Status{}
+		if err := rows.StructScan(&entity); err != nil {
+			return nil, err
+		}
+		entities = append(entities, entity)
+	}
+	return entities, nil
+}
+
+func (r *status) Insert(ctx context.Context, accountID int64, content string) (object.StatusID, error) {
 	stmt, err := r.db.PreparexContext(ctx, "INSERT INTO `status` (`account_id`, `content`) VALUES (?, ?)")
 	if err != nil {
 		return 0, err
@@ -59,7 +115,7 @@ func (r *status) Insert(ctx context.Context, accountID int64, content string) (i
 	return id, nil
 }
 
-func (r *status) Delete(ctx context.Context, id int64) error {
+func (r *status) Delete(ctx context.Context, id object.StatusID) error {
 	stmt, err := r.db.PrepareContext(ctx, "UPDATE `status` SET `delete_at` = NOW() WHERE `id` = ?")
 	if err != nil {
 		return err

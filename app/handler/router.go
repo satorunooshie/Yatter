@@ -12,6 +12,7 @@ import (
 	"github.com/satorunooshie/Yatter/app/handler/accounts"
 	"github.com/satorunooshie/Yatter/app/handler/health"
 	"github.com/satorunooshie/Yatter/app/handler/statuses"
+	"github.com/satorunooshie/Yatter/app/handler/timelines"
 )
 
 func NewRouter(app *app.App) http.Handler {
@@ -35,6 +36,7 @@ func NewRouter(app *app.App) http.Handler {
 
 	/* including auth */
 	r.Mount("/v1/statuses", statuses.NewRouter(app))
+	r.Mount("/v1/timelines", timelines.NewRouter(app))
 
 	return r
 }
