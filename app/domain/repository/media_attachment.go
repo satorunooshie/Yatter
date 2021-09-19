@@ -7,5 +7,5 @@ import (
 )
 
 type MediaAttachment interface {
-	FindByStatusIDs(ctx context.Context, statusIDs []int64) ([]*object.MediaAttachment, error)
+	FindByStatusIDs(ctx context.Context, statusIDs []object.StatusID) ([]*object.MediaAttachment, error)
 }

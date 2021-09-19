@@ -13,7 +13,7 @@ import (
 )
 
 type (
-	// Implementation for repository.Status
+	// Implementation for repository.MediaAttachment
 	mediaAttachment struct {
 		db *sqlx.DB
 	}
@@ -23,7 +23,7 @@ func NewMediaAttachment(db *sqlx.DB) repository.MediaAttachment {
 	return &mediaAttachment{db: db}
 }
 
-func (r *mediaAttachment) FindByStatusIDs(ctx context.Context, statusIDs []int64) ([]*object.MediaAttachment, error) {
+func (r *mediaAttachment) FindByStatusIDs(ctx context.Context, statusIDs []object.StatusID) ([]*object.MediaAttachment, error) {
 	query, params, err := sqlx.In("SELECT * FROM `media_attachment` WHERE `status_id` IN (?) AND `delete_at` IS NULL", statusIDs)
 	if err != nil {
 		return nil, err
