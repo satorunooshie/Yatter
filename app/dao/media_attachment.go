@@ -53,3 +53,31 @@ func (r *mediaAttachment) FindByStatusIDs(ctx context.Context, statusIDs []objec
 	}
 	return entities, nil
 }
+
+func (r *mediaAttachment) Select(ctx context.Context, minID, maxID, limit int64) ([]*object.MediaAttachment, error) {
+
+	rows, err := r.db.QueryxContext(ctx, "SELECT * FROM `media_attachment` WHERE `status_id` BETWEEN ? AND ? AND `delete_at` IS NULL ORDER BY `create_at` DESC LIMIT ?", minID, maxID, limit)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("[WARN] dao::media_attachment::Select::rows.Close(): %v", err)
+		}
+	}()
+
+	entities := make([]*object.MediaAttachment, 0, limit)
+	for rows.Next() {
+		entity := &object.MediaAttachment{}
+		if err := rows.StructScan(&entity); err != nil {
+			return nil, err
+		}
+		entity.SetMediaType()
+		entities = append(entities, entity)
+	}
+	return entities, nil
+}

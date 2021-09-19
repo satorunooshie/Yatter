@@ -34,6 +34,36 @@ func (r *status) FindByID(ctx context.Context, id object.StatusID) (*object.Stat
 	return entity, nil
 }
 
+func (r *status) FindByIDs(ctx context.Context, ids []object.StatusID) ([]*object.Status, error) {
+	query, params, err := sqlx.In("SELECT * FROM `status` WHERE `id` IN (?) AND `delete_at` IS NULL", ids)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := r.db.QueryxContext(ctx, query, params...)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("[WARN] dao::account::FindByIDs::rows.Close(): %v", err)
+		}
+	}()
+
+	entities := make([]*object.Status, 0, len(ids))
+	for rows.Next() {
+		entity := &object.Status{}
+		if err := rows.StructScan(&entity); err != nil {
+			return nil, err
+		}
+		entities = append(entities, entity)
+	}
+	return entities, nil
+}
+
 func (r *status) Select(ctx context.Context, minID, maxID, limit int64) ([]*object.Status, error) {
 	rows, err := r.db.QueryxContext(ctx, "SELECT * FROM `status` WHERE `id` BETWEEN ? AND ? AND `delete_at` IS NULL ORDER BY `create_at` DESC LIMIT ?", minID, maxID, limit)
 	if err != nil {
@@ -58,10 +88,6 @@ func (r *status) Select(ctx context.Context, minID, maxID, limit int64) ([]*obje
 		entities = append(entities, entity)
 	}
 	return entities, nil
-}
-
-func (r *status) SelectOnlyMedia(ctx context.Context, minID, maxID, limit int64) ([]*object.Status, error) {
-	return nil, nil
 }
 
 func (r *status) Insert(ctx context.Context, accountID int64, content string) (object.StatusID, error) {
