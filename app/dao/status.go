@@ -35,7 +35,7 @@ func (r *status) FindByID(ctx context.Context, id int64) (*object.Status, error)
 }
 
 func (r *status) Select(ctx context.Context, minID, maxID, limit int64) ([]*object.Status, error) {
-	rows, err := r.db.QueryxContext(ctx, "SELECT * FROM `status` WHERE `id` BETWEEN ? AND ? AND `delete_at` IS NULL LIMIT ?", minID, maxID, limit)
+	rows, err := r.db.QueryxContext(ctx, "SELECT * FROM `status` WHERE `id` BETWEEN ? AND ? AND `delete_at` IS NULL ORDER BY `create_at` DESC LIMIT ?", minID, maxID, limit)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil

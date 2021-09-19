@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 
@@ -75,8 +76,8 @@ func (r *account) FindByUsername(ctx context.Context, username string) (*object.
 	return entity, nil
 }
 
-func (r *account) Insert(ctx context.Context, username, passwordHash string) error {
-	stmt, err := r.db.PreparexContext(ctx, "INSERT INTO `account` (`username`, `password_hash`) VALUES (?, ?)")
+func (r *account) Insert(ctx context.Context, username, passwordHash string, createAt time.Time) error {
+	stmt, err := r.db.PreparexContext(ctx, "INSERT INTO `account` (`username`, `password_hash`, `create_at`) VALUES (?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -85,7 +86,7 @@ func (r *account) Insert(ctx context.Context, username, passwordHash string) err
 			log.Printf("[WARN] dao::account::Insert::stmt.Close(): %v", err)
 		}
 	}()
-	if _, err := stmt.ExecContext(ctx, username, passwordHash); err != nil {
+	if _, err := stmt.ExecContext(ctx, username, passwordHash, createAt); err != nil {
 		return err
 	}
 	return nil

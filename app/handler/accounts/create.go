@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/satorunooshie/Yatter/app/domain/object"
 	"github.com/satorunooshie/Yatter/app/handler/httperror"
@@ -43,7 +44,8 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	account.Username = req.Username
-	if err := accountRepo.Insert(ctx, account.Username, account.PasswordHash); err != nil {
+	account.CreateAt = object.DateTime{Time: time.Now()}
+	if err := accountRepo.Insert(ctx, account.Username, account.PasswordHash, account.CreateAt.Time); err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	}

@@ -42,7 +42,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	status.Account = *account
+	status.Account = account
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(status); err != nil {

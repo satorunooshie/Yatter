@@ -46,7 +46,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	res := &object.Status{
 		ID:       id,
-		Account:  *account,
+		Account:  account,
 		Content:  status.Content,
 		CreateAt: status.CreateAt,
 	}
