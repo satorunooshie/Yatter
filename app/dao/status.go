@@ -90,7 +90,7 @@ func (r *status) Select(ctx context.Context, minID, maxID, limit int64) ([]*obje
 	return entities, nil
 }
 
-func (r *status) Insert(ctx context.Context, accountID int64, content string) (object.StatusID, error) {
+func (r *status) Insert(ctx context.Context, accountID object.AccountID, content string) (object.StatusID, error) {
 	stmt, err := r.db.PreparexContext(ctx, "INSERT INTO `status` (`account_id`, `content`) VALUES (?, ?)")
 	if err != nil {
 		return 0, err
