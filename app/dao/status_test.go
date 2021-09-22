@@ -483,8 +483,9 @@ func Test_status_Delete(t *testing.T) {
 	}
 
 	type args struct {
-		ctx      context.Context
-		statusID object.StatusID
+		ctx       context.Context
+		statusID  object.StatusID
+		accountID object.AccountID
 	}
 	tests := []struct {
 		name    string
@@ -497,12 +498,13 @@ func Test_status_Delete(t *testing.T) {
 			query: func(s sqlxmock.Sqlmock) {
 				s.ExpectPrepare(regexp.QuoteMeta("UPDATE `status` SET `delete_at` = NOW() WHERE `id` = ?")).
 					ExpectExec().
-					WithArgs(1).
+					WithArgs(1, 1).
 					WillReturnResult(sqlxmock.NewResult(1, 1))
 			},
 			args: args{
-				ctx:      context.Background(),
-				statusID: 1,
+				ctx:       context.Background(),
+				statusID:  1,
+				accountID: 1,
 			},
 			wantErr: false,
 		},
@@ -511,12 +513,13 @@ func Test_status_Delete(t *testing.T) {
 			query: func(s sqlxmock.Sqlmock) {
 				s.ExpectPrepare(regexp.QuoteMeta("UPDATE `status` SET `delete_at` = NOW() WHERE `id` = ?")).
 					ExpectExec().
-					WithArgs(1).
+					WithArgs(1, 1).
 					WillReturnError(errors.New("error"))
 			},
 			args: args{
-				ctx:      context.Background(),
-				statusID: 1,
+				ctx:       context.Background(),
+				statusID:  1,
+				accountID: 1,
 			},
 			wantErr: true,
 		},
@@ -525,7 +528,7 @@ func Test_status_Delete(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			tt.query(mock)
-			if err := r.Delete(tt.args.ctx, tt.args.statusID); (err != nil) != tt.wantErr {
+			if err := r.Delete(tt.args.ctx, tt.args.statusID, tt.args.accountID); (err != nil) != tt.wantErr {
 				t.Errorf("status.Delete() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}

@@ -115,8 +115,8 @@ func (r *status) Insert(ctx context.Context, accountID object.AccountID, content
 	return id, nil
 }
 
-func (r *status) Delete(ctx context.Context, id object.StatusID) error {
-	stmt, err := r.db.PrepareContext(ctx, "UPDATE `status` SET `delete_at` = NOW() WHERE `id` = ?")
+func (r *status) Delete(ctx context.Context, id object.StatusID, accountID object.AccountID) error {
+	stmt, err := r.db.PrepareContext(ctx, "UPDATE `status` SET `delete_at` = NOW() WHERE `id` = ? AND `account_id` = ?")
 	if err != nil {
 		return err
 	}
@@ -127,7 +127,7 @@ func (r *status) Delete(ctx context.Context, id object.StatusID) error {
 		}
 	}()
 
-	if _, err := stmt.ExecContext(ctx, id); err != nil {
+	if _, err := stmt.ExecContext(ctx, id, accountID); err != nil {
 		return err
 	}
 	return nil
