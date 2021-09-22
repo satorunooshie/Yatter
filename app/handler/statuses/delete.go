@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/satorunooshie/Yatter/app/handler/auth"
 	"github.com/satorunooshie/Yatter/app/handler/httperror"
 	"github.com/satorunooshie/Yatter/app/handler/request"
 )
@@ -18,7 +19,18 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	statusRepo := h.app.Dao.Status() // domain/repository の取得
 
-	if err := statusRepo.Delete(ctx, id); err != nil {
+	accountID := auth.AccountOf(r).ID
+	status, err := statusRepo.FindByID(ctx, id)
+	if err != nil {
+		httperror.InternalServerError(w, err)
+		return
+	}
+	if status.Account.ID != accountID {
+		httperror.Error(w, http.StatusUnauthorized)
+		return
+	}
+
+	if err := statusRepo.Delete(ctx, id, accountID); err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	}
