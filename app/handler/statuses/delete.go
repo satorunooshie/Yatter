@@ -19,18 +19,23 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	statusRepo := h.app.Dao.Status() // domain/repository の取得
 
-	accountID := auth.AccountOf(r).ID
+	account := auth.AccountOf(r)
+	if account == nil {
+		httperror.Error(w, http.StatusUnauthorized)
+		return
+	}
+
 	status, err := statusRepo.FindByID(ctx, id)
 	if err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	}
-	if status.Account.ID != accountID {
+	if status.Account.ID != account.ID {
 		httperror.Error(w, http.StatusUnauthorized)
 		return
 	}
 
-	if err := statusRepo.Delete(ctx, id, accountID); err != nil {
+	if err := statusRepo.Delete(ctx, id, account.ID); err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	}
