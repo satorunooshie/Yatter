@@ -30,7 +30,7 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 		httperror.InternalServerError(w, err)
 		return
 	}
-	if status.Account.ID != account.ID {
+	if status.AccountID != account.ID {
 		httperror.Error(w, http.StatusUnauthorized)
 		return
 	}
