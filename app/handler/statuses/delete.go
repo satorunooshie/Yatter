@@ -2,6 +2,7 @@ package statuses
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/satorunooshie/Yatter/app/handler/auth"
@@ -28,6 +29,10 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	status, err := statusRepo.FindByID(ctx, id)
 	if err != nil {
 		httperror.InternalServerError(w, err)
+		return
+	}
+	if status == nil {
+		httperror.BadRequest(w, errors.New("status does not exist"))
 		return
 	}
 	if status.AccountID != account.ID {
